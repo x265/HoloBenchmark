@@ -15,7 +15,7 @@ namespace holobenchmark
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new frmMain(args[1], args[0], "eng"));
+			Application.Run(new frmMain(args[2], args[1], args[0]));
 		}
 	}
 }
