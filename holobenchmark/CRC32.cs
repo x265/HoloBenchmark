@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace holobenchmark
 {
@@ -34,7 +31,7 @@ namespace holobenchmark
 
 				uint crc = getCRC(buffer, length);
 
-				return String.Format("0x{0,8:X}", crc);
+				return string.Format("0x{0,8:X8}", crc);
 			}
 			catch (Exception ex)
 			{

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Text;
+﻿using System.Management;
 
 namespace holobenchmark
 {
@@ -20,7 +16,7 @@ namespace holobenchmark
 				{
 					foreach (ManagementObject item in searcher.Get())
 					{
-						data = String.Format("{0}", item[key]);
+						data = string.Format("{0}", item[key]);
 					}
 				}
 				catch

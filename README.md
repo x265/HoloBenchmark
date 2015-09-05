@@ -3,6 +3,9 @@ Allow user to test which binary and which CPU is the fastest
 
 documentation will be constructed soon.
 
+## Reference
+Refer to `references/readme.md`
+
 ## API
 `public frmMain(string file, string compiler, string lang)`
 

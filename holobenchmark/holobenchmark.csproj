@@ -38,6 +38,9 @@
     <ApplicationIcon>Resources\Benchmark.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MediaInfoDotNet">
+      <HintPath>..\..\IFME\references\MediaInfoDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -65,17 +68,6 @@
       <DependentUpon>frmPleaseWait.cs</DependentUpon>
     </Compile>
     <Compile Include="MachineInfo.cs" />
-    <Compile Include="MediaInfoDotNet\MediaFile.cs" />
-    <Compile Include="MediaInfoDotNet\MediaInfoDLL.cs" />
-    <Compile Include="MediaInfoDotNet\Models\Media.cs" />
-    <Compile Include="MediaInfoDotNet\Models\MultiStreamCommon.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\AudioStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\GeneralStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\ImageStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\MenuStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\OtherStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\TextStream.cs" />
-    <Compile Include="MediaInfoDotNet\Models\StreamKind\VideoStream.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
