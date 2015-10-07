@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -50,8 +46,8 @@ namespace holobenchmark
 		public frmMain(string file, string compiler, string lang)
 		{
 			InitializeComponent();
-			this.Icon = Properties.Resources.Benchmark;
-			this.Text = String.Format("{0} ({1}) v{2}", Application.ProductName, compiler.ToUpper(), Application.ProductVersion);
+			Icon = Properties.Resources.Benchmark;
+			Text = string.Format("Holo Benchmark ({1}) v{2}", Application.ProductName, compiler.ToUpper(), Application.ProductVersion);
 
 			_file = file;
 			_compiler = compiler;
@@ -67,7 +63,7 @@ namespace holobenchmark
 			if (!Directory.Exists(TEMP))
 				Directory.CreateDirectory(TEMP);
 
-			lblFile.Text = String.Format("{0}\n{1}", Path.GetDirectoryName(_file), Path.GetFileName(_file));
+			lblFile.Text = string.Format("{0}\n{1}", Path.GetDirectoryName(_file), Path.GetFileName(_file));
 
 			MediaFile AVI = new MediaFile(_file);
 			if (AVI.Video.Count > 0)
@@ -75,13 +71,13 @@ namespace holobenchmark
 				var Video = AVI.Video[0];
 
 				var Codec = Video.format;
-				var Resolution = String.Format("{0}x{1}", Video.width, Video.height);
+				var Resolution = string.Format("{0}x{1}", Video.width, Video.height);
 				var Duration = TimeSpan.FromMilliseconds(Video.duration);
 				var FrameRate = Video.frameRateGet;
 				var BitDepth = Video.bitDepth;
-				var Chroma = String.Format("{0} {1}", Video.colorSpace, Video.chromaSubSampling);
+				var Chroma = string.Format("{0} {1}", Video.colorSpace, Video.chromaSubSampling);
 
-				lblMediaData.Text = String.Format("{0}\n{1}\n{2:D2}h {3:D2}m {4:D2}s\n{5} fps\n{6} bit per colour ({7} bit)\n{8}", Codec, Resolution, Duration.Hours, Duration.Minutes, Duration.Seconds, FrameRate, BitDepth, BitDepth * 3, Chroma);
+				lblMediaData.Text = string.Format("{0}\n{1}\n{2:D2}h {3:D2}m {4:D2}s\n{5} fps\n{6} bit per colour ({7} bit)\n{8}", Codec, Resolution, Duration.Hours, Duration.Minutes, Duration.Seconds, FrameRate, BitDepth, BitDepth * 3, Chroma);
 
 				_framecount = Video.frameCount;
 				_bitdepth = Video.bitDepth;
@@ -304,7 +300,7 @@ namespace holobenchmark
 
 		private void InvokeStatus(string s)
 		{
-			if (this.InvokeRequired)
+			if (InvokeRequired)
 				BeginInvoke(new MethodInvoker(() => lblStatus.Text = s));
 			else
 				lblStatus.Text = s;
