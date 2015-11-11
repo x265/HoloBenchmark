@@ -37,8 +37,7 @@ namespace holobenchmark
 
 		string DIR = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 		string TEMP = Path.Combine(Path.GetTempPath(), "holo");
-		string HEVCL;
-		string HEVCH;
+		string HEVC;
 		string FFMPG;
 
 		Form wait = new frmPleaseWait("Please Wait\nGetting CRC32");
@@ -47,7 +46,7 @@ namespace holobenchmark
 		{
 			InitializeComponent();
 			Icon = Properties.Resources.Benchmark;
-			Text = string.Format("Holo Benchmark ({1}) v{2}", Application.ProductName, compiler.ToUpper(), Application.ProductVersion);
+			Text = $"Holo Benchmark ({compiler.ToUpper()}) v{Application.ProductVersion}";
 
 			_file = file;
 			_compiler = compiler;
@@ -57,13 +56,12 @@ namespace holobenchmark
 		private void frmBenchmark_Load(object sender, EventArgs e)
 		{
 			FFMPG = Path.Combine(DIR, "plugins", "ffmpeg", "ffmpeg");
-			HEVCL = Path.Combine(DIR, "plugins", "x265" + _compiler, "x265lo");
-			HEVCH = Path.Combine(DIR, "plugins", "x265" + _compiler, "x265hi");
+			HEVC = Path.Combine(DIR, "plugins", "x265" + _compiler, "x265");
 
 			if (!Directory.Exists(TEMP))
 				Directory.CreateDirectory(TEMP);
 
-			lblFile.Text = string.Format("{0}\n{1}", Path.GetDirectoryName(_file), Path.GetFileName(_file));
+			lblFile.Text = $"{Path.GetDirectoryName(_file)}\n{Path.GetFileName(_file)}";
 
 			MediaFile AVI = new MediaFile(_file);
 			if (AVI.Video.Count > 0)
@@ -71,13 +69,13 @@ namespace holobenchmark
 				var Video = AVI.Video[0];
 
 				var Codec = Video.format;
-				var Resolution = string.Format("{0}x{1}", Video.width, Video.height);
+				var Resolution = $"{Video.width}x{Video.height}";
 				var Duration = TimeSpan.FromMilliseconds(Video.duration);
 				var FrameRate = Video.frameRateGet;
 				var BitDepth = Video.bitDepth;
-				var Chroma = string.Format("{0} {1}", Video.colorSpace, Video.chromaSubSampling);
+				var Chroma = $"{Video.colorSpace} {Video.chromaSubSampling}";
 
-				lblMediaData.Text = string.Format("{0}\n{1}\n{2:D2}h {3:D2}m {4:D2}s\n{5} fps\n{6} bit per colour ({7} bit)\n{8}", Codec, Resolution, Duration.Hours, Duration.Minutes, Duration.Seconds, FrameRate, BitDepth, BitDepth * 3, Chroma);
+				lblMediaData.Text = $"{Codec}\n{Resolution}\n{Duration.Hours:D2}h {Duration.Minutes:D2}m {Duration.Seconds:D2}s\n{FrameRate} fps\n{BitDepth} bit per colour ({BitDepth * 3} bit)\n{Chroma}";
 
 				_framecount = Video.frameCount;
 				_bitdepth = Video.bitDepth;
@@ -91,7 +89,7 @@ namespace holobenchmark
 
 		private void Benchmark_Shown(object sender, EventArgs e)
 		{
-			bgwCRC32.RunWorkerAsync((object)_file); // get CRC32
+			bgwCRC32.RunWorkerAsync(_file); // get CRC32
 			wait.Show();
 		}
 
@@ -107,16 +105,16 @@ namespace holobenchmark
 
 		private void trkValue_ValueChanged(object sender, EventArgs e)
 		{
-			_value = String.Format("{0:0.0}", Convert.ToDouble(trkValue.Value) * 0.1);
+			_value = $"{Convert.ToDouble(trkValue.Value) * 0.1:0.0}";
 			lblValue.Text = "@ " + _value;
 		}
 		private void btnScreenShot_Click(object sender, EventArgs e)
 		{
-			var frm = Form.ActiveForm;
+			var frm = ActiveForm;
 			using (var bmp = new Bitmap(frm.Width, frm.Height))
 			{
 				frm.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
-				bmp.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), String.Format("IFME_BENCHMARK_{0:yyyyMMdd_HHmmss}.PNG", DateTime.Now)));
+				bmp.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"IFME_BENCHMARK_{DateTime.Now:yyyyMMdd_HHmmss}.PNG"));
 
 				MessageBox.Show("Screenshot has been saved on your desktop");
 			}
@@ -166,16 +164,14 @@ namespace holobenchmark
 			string cmd = (string)argList[7];
 
 			string ten = bitdepth == 10 ? "10le" : null;
-			string tun = String.Equals(tune, "off") ? null : "--tune " + tune;
+			string tun = string.Equals(tune, "off") ? null : "--tune " + tune;
 
 			string NULL = OS.Null;
-			string DECODER = FFMPG;
-			string ENCODER = bitdepth == 8 ? HEVCL : HEVCH;
 
 			bgwRead.RunWorkerAsync(); // start read
 
-			Run(String.Format("\"{0}\" -i \"{1}\" -f yuv4mpegpipe -pix_fmt yuv{2}p{3} -strict -1 - 2> {4} | \"{5}\" --y4m - -p {6} {7} --crf {8} -f {9} {10} -o benchmark.hevc 2> result.txt 1>&2", DECODER, file, chroma, ten, NULL, ENCODER, preset, tun, value, framecount, cmd));
-			ResultRead();
+			Run($"\"{FFMPG}\" -i \"{file}\" -f yuv4mpegpipe -pix_fmt yuv{chroma}p{ten} -strict -1 - 2> {NULL} | \"{HEVC}-{bitdepth:00}\" --y4m - -p {preset} {tun} --crf {value} -f {framecount} {cmd} -o benchmark.hevc 2> result.txt 1>&2");
+            ResultRead();
 		}
 
 		private void bgwBenchmark_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -191,7 +187,7 @@ namespace holobenchmark
 			string AvgFps = ResultGet(x265Result.FPS);
 			string Duration = ResultGet(x265Result.Duration);
 
-			lblResultData.Text = String.Format("{0} (~{1} MHz)\n{2}\n{3}\n{4}\n{5}\n{6}\n{7}", CpuName, CpuSpeed, OS.FriendlyName, Encoder, Build, ISet, AvgFps, Duration);
+			lblResultData.Text = $"{CpuName} (~{CpuSpeed} MHz)\n{OS.FriendlyName}\n{Encoder}\n{Build}\n{ISet}\n{AvgFps}\n{Duration}";
 
 			btnStart.Text = "&START";
 
@@ -337,7 +333,7 @@ namespace holobenchmark
 
 		private void Kill()
 		{
-			string[] proc = { "x265lo", "x265hi", "ffmpeg" };
+			string[] proc = { "x265-08", "x265-10", "x265-12", "ffmpeg" };
 			foreach (var item in proc)
 			{
 				Process[] Task = Process.GetProcessesByName(item);
